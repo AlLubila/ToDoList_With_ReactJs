@@ -1,43 +1,41 @@
-// All imports
-import { useState } from "react";
-import { TaskItem } from "./TaskItem";
+import { useState } from "react"
+import { TaskItem } from "./TaskItem"
 
 // Form function
 export const Form = () =>{
+  const[tasks, setTasks] = useState([])
+  const [currentValue, setCurrentValue]=useState("")
 
-    // UseState
-    const [tasks, setTasks] = useState([]);
-    const [currentValue, setCurrentValue] = useState("")
-
-    // HandleEvent
-    const handleSubmit = (event) => {
-      event.preventDefault();
-        if (currentValue.trim()) {
-            setTasks([...tasks, currentValue])
-        }
-      setCurrentValue("")
+  const handleSubmit = (e)=>{
+    e.preventDefault();
+    if (currentValue.trim()) {
+      setTasks([...tasks, {text: currentValue, status: "Active"}])
     }
- 
+  setCurrentValue("") 
+  
+  }
+  const handleStatusChange = (index)=>{
+    const updateTasks = [...tasks]
+    updateTasks[index].status = updateTasks[index].status === "Active" ? "Done" : "Active"
+   setTasks(updateTasks)  
+   }
     return (
+    <>
+    <form onSubmit={handleSubmit}>
+      <label> Enter a task: 
+         <input type="text" 
+         value={currentValue}
+         onChange={(e) => setCurrentValue(e.target.value)}
+         />
+        <button>Add the task</button>
+      </label>
+      {tasks.length > 0 &&
+      <ul>
+    {tasks.map((task, index)=> <TaskItem key={index} items ={task.text} status={task.status} onStatusChange = {()=> handleStatusChange(index)}/>)} 
+      </ul>
+      }
+    </form>
 
-        // Form
-      <form onSubmit={handleSubmit}>
-        <label>Enter your Task:
-          <input 
-            type="text" 
-            value={currentValue}
-            onChange={(e)=>{setCurrentValue(e.target.value)}}
-          />
-        </label>
-        <button onClick={handleSubmit}>Add task</button>
-        
-        {/* Task List */}
-       { tasks.length > 0 && <ul>
-        {tasks.map((task) => <TaskItem key={task} item={task}/>)}
-        
-        </ul>
-        }
-   
-      </form>
+    </>
     )
 }
